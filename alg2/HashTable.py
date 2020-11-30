@@ -7,7 +7,7 @@ class HashTableEntry:
         self.key = key
         self.item = item
 
-
+#TODO:  Refactor methods
 class HashTable:
 
     def print(self):

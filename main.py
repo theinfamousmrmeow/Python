@@ -11,7 +11,7 @@ if __name__ == '__main__':
     ht.insert(0,"what a cat does")
     ht.print()
 
-    commandList = '\tfind - Find a package.\n\tquit - End program.\n'
+    commandList = '\tfind - Find a package at a given time.\n\ttime - find package states at a certain time.\n\tquit - End program.\n'
     command = "none"
 
     while command is not 'quit':
