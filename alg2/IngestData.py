@@ -8,6 +8,13 @@ from alg2.truck import trucks
 
 
 EOD = "23:59:59"
+with open('WGUPS_DISTANCE_FILE.csv') as input_file:
+    distances = csv.reader(input_file, delimiter=',')
+    distances = list(distances)
+# Read in csv file that is the names of all possible delivery locations
+with open('WGUPS_LOCATION_FILE.csv') as input_file:
+    locations = csv.reader(input_file, delimiter=',')
+    locations = list(locations)
 
 with open('WGUPS_PACKAGE_FILE.csv') as input_file:
     slurpCSV = csv.reader(input_file, delimiter=",")

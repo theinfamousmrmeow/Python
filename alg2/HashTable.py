@@ -1,81 +1,72 @@
-###HASHTABLE CLASS
-###Kept somewhat generic
+# HASHTABLE CLASS
+# kept somewhat generic
+###TODO:  DONE!!!
 
-#TODO:  Refactor methods
 class HashTable:
-
-    COLUMN_ADDRESS = 0
-
-
-    #Not sure if evaluators are using Python 3.4 with enums, so using list instead
-    #Use a list.index to make the code more human readable, instead of just referencing indices directly
-    columnNames = ["packageID", "address", "city", "state", "zip", "deadline", "weight", "notes", "status"]
-
+    # Just a convenience method to print out the whole table
     def print(self):
-        print(*self.map)
-
+        print(*self.hashtable)
     # Constructor
-    # Space-time complexity is O(1)
-    def __init__(self, initial_capacity=40):
+    # space-time complexity O(1)
+    def __init__(self, size=40):
         # initialize the hash table with empty bucket list entries.
-        self.map = []
-        for i in range(initial_capacity):
-            self.map.append([])
-
-    # private getter to create a hash key
-    # Space-time complexity is O(1)
-    def _get_hash(self, key):
-        bucket = int(key) % len(self.map)
-        return bucket
-
-    # Insert a new package value into the hash table
-    # Space-time complexity is O(N)
+        self.hashtable = []
+        for kvp in range(size):
+            self.hashtable.append([])
+    # Getter to generate a key
+    # space-time complexity O(1)
+    def _get_hashkey(self, key):
+        return int(key) % len(self.hashtable)
+    # Inserts a new PackageEntry into the HashTable
+    # space-time complexity O(N)
     def insert(self, key, value):
-        key_hash = self._get_hash(key)
-        key_value = [key, value]
-        #Brand new insertion
-        if self.map[key_hash] is None:
-            self.map[key_hash] = list([key_value])
+        kv = [key, value]
+        hashkey = self._get_hashkey(key)
+        # Brand new insertion
+        if self.hashtable[hashkey] is None:
+            self.hashtable[hashkey] = kv
             return True
         else:
-            #Overwrite a previous value
-            for pair in self.map[key_hash]:
-                if pair[0] == key:
-                    pair[1] = key_value
+            # Overwrite any previous value
+            for kvp in self.hashtable[hashkey]:
+                if kvp[0] == key:
+                    kvp[1] = kv
                     return True
-            self.map[key_hash].append(key_value)
+            self.hashtable[hashkey].append(kv)
             return True
-
-    # Space-time complexity is O(N)
-    def update(self, key, value):
-        key_hash = self._get_hash(key)
-        if self.map[key_hash] is not None:
-            for pair in self.map[key_hash]:
-                if pair[0] == key:
-                    pair[1] = value
-                    print(pair[1])
-                    return True
-        else:
-            print('ERROR updating key: ' + key)
-
-    # Grab a value from the hash table
-    # Space-time complexity is O(N)
-    def get(self, key):
-        key_hash = self._get_hash(key)
-        if self.map[key_hash] is not None:
-            for pair in self.map[key_hash]:
-                if pair[0] == key:
-                    return pair[1]
-        return None
     # Remove a value from the hash table
     # runtime is O(N)
     def delete(self, key):
-        key_hash = self._get_hash(key)
-
-        if self.map[key_hash] is None:
+        hashkey = self._get_hashkey(key)
+        # Nothing to delete
+        if self.hashtable[hashkey] is None:
             return False
-        for i in range(0, len(self.map[key_hash])):
-            if self.map[key_hash][i][0] == key:
-                self.map[key_hash].pop(i)
+        # Search the whole table for the key
+        for kvp in range(0, len(self.hashtable[hashkey])):
+            if self.hashtable[hashkey][kvp][0] == key:
+                self.hashtable[hashkey].pop(kvp)
                 return True
+        # Was none
         return False
+    # Returns a value associated with a key
+    # space-time complexity O(N)
+    def get(self, key):
+        hashkey = self._get_hashkey(key)
+        if self.hashtable[hashkey] is not None:
+            for kvp in self.hashtable[hashkey]:
+                if kvp[0] == key:
+                    return kvp[1]
+        # Couldn't find a value
+        return None
+    # Update a KVP
+    # space-time complexity O(N)
+    def update(self, key, value):
+        hashkey = self._get_hashkey(key)
+        if self.hashtable[hashkey] is not None:
+            for kvp in self.hashtable[hashkey]:
+                if kvp[0] == key:
+                    kvp[1] = value
+                    return True
+        else:
+            print('ERROR ON UPDATE KEY: ' + key)
+

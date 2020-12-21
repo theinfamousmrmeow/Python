@@ -1,102 +1,73 @@
 ### Alexander Macey
+### C950 Algorithms II
 
 #IMPORTS
-
-from alg2.HashTable import HashTable
-
 from alg2.IngestData import get_hash_map
-
-from alg2.DistanceData import *
+from alg2.DeliveryStatus import *
 from alg2.Distances import *
 from alg2.Packages import total_distance
 
 if __name__ == '__main__':
 
-    #ht = HashTable()
-    #ht.print()
-    #ht.insert(0,"what a cat does")
-    #ht.print()
-    #get_hash_map().print()
     commandList = '\tinsert - Create a new package.\n\tlook-up - Find a package at a given time.\n\ttime - find package states at a certain time.\n\tquit - End program.\n'
     command = "none"
-    get_hash_map().print()
-    print('Current route was completed in', "{0:.2f}".format(total_distance(), 2), 'miles.')
-   # first_time = get_hash_map().get(str("1"))[6]
-   # print("FIRST_TIME")
-   # print(first_time)
+    print('Route was completed in:', "{0:.2f}".format(total_distance(), 2), 'miles.')
 
+    ###Convenience methods
     ##Gets an input string from user and makes it a a datetime
     def inputTime():
         (hours, minutes, seconds) = input('At what time?  HH:MM:SS:\n').split(':')
         return datetime.timedelta(hours=int(hours), minutes=int(minutes), seconds=int(seconds))
 
+
+    ##Turns strings in our format into datetime objects
+    def stringToDatetime(string):
+        (h, m, s) = string.split(':')
+        return datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
+
+
+    ##Console loop
     while command is not 'quit':
         if command == 'look-up':
             try:
-                ##Do lookup routine
+                ##Get package_id and timestamp
                 lookup_id = input('Please give package id:\n')
-                ##Turn string into datetime
                 any_given_time = inputTime()
                 ###Print package data from Htable
-                print('Package ID '+lookup_id + " at: ")
-                print(any_given_time)
-                print(get_hash_map().get(lookup_id))
+                print('Package ID '+lookup_id + " at:", any_given_time)
                 command = ""
+                print('\n\tStreet address:',get_hash_map().get(str(lookup_id))[2], get_hash_map().get(str(lookup_id))[3],get_hash_map().get(str(lookup_id))[4], get_hash_map().get(str(lookup_id))[5],
+                      '\n\tRequired delivery time:', get_hash_map().get(str(lookup_id))[6],
+                      '\n\tPackage weight:', get_hash_map().get(str(lookup_id))[7],
+                      '\n\tDeparture time:',get_hash_map().get(str(lookup_id))[9],
+                      '\n\tDelivery time:',get_hash_map().get(str(lookup_id))[10])
             except ValueError:
                 print("Input Error happened, try again.")
-        elif command == 'timestamp':
+        elif command == 'time':
             try:
-                #package_status_time = input('Please enter a time in the HH:MM:SS format: ')
-                convert_user_time = inputTime()
+                #Get timestamp to check
+                query_time = inputTime()
                 # Space-time complexity is O(N^2)
-                for count in range(1, 41):
+                for packages_id in range(1, 41):
                     try:
-                        print("Package ID :"+str(count))
-                        get_hash_map().print()
-                        first_time = get_hash_map().get(str(count))[9]
-                        print(first_time)
-                        second_time = get_hash_map().get(str(count))[10]
-                        (h, m, s) = first_time.split(':')
-                        convert_first_time = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
-                        (h, m, s) = second_time.split(':')
-                        convert_second_time = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
+                        departure_time = get_hash_map().get(str(packages_id))[9]
+                        delivered_time = get_hash_map().get(str(packages_id))[10]
                     except ValueError:
                         print(ValueError)
                         pass
                     # First checks all packages against the given time determine if they have left the hub yet.
-                    if convert_first_time >= convert_user_time:
-                        get_hash_map().get(str(count))[10] = 'At Hub'
-                        get_hash_map().get(str(count))[9] = 'Leaves at ' + first_time
-                        print('Package ID:', get_hash_map().get(str(count))[0], '   Street address:',
-                              get_hash_map().get(str(count))[2], get_hash_map().get(str(count))[3],
-                              get_hash_map().get(str(count))[4], get_hash_map().get(str(count))[5],
-                              '  Required delivery time:', get_hash_map().get(str(count))[6],
-                              ' Package weight:', get_hash_map().get(str(count))[7], '  Truck status:',
-                              get_hash_map().get(str(count))[9], '  Delivery status:',
-                              get_hash_map().get(str(count))[10])
-                    elif convert_first_time <= convert_user_time:
+                    if stringToDatetime(departure_time) >= query_time:
+                        get_hash_map().get(str(packages_id))[10] = AT_HUB
+                        get_hash_map().get(str(packages_id))[9] = 'Leaves at ' + departure_time
+                    elif stringToDatetime(departure_time) < query_time:
                         # Then checks to see which packages have left the hub but have not been delivered yet
-                        if convert_user_time < convert_second_time:
-                            get_hash_map().get(str(count))[10] = 'In transit'
-                            get_hash_map().get(str(count))[9] = 'Left at ' + first_time
-                            print('Package ID:', get_hash_map().get(str(count))[0], '   Street address:',
-                                  get_hash_map().get(str(count))[2], get_hash_map().get(str(count))[3],
-                                  get_hash_map().get(str(count))[4], get_hash_map().get(str(count))[5],
-                                  '  Required delivery time:', get_hash_map().get(str(count))[6],
-                                  ' Package weight:', get_hash_map().get(str(count))[7], '  Truck status:',
-                                  get_hash_map().get(str(count))[9], '  Delivery status:',
-                                  get_hash_map().get(str(count))[10])
-                        # Finally checks all packages that have already been delivered and displays the delivered time
+                        if query_time < stringToDatetime(delivered_time):
+                            get_hash_map().get(str(packages_id))[10] = 'In transit'
+                            get_hash_map().get(str(packages_id))[9] = 'Left at ' + departure_time
                         else:
-                            get_hash_map().get(str(count))[10] = 'Delivered at ' + second_time
-                            get_hash_map().get(str(count))[9] = 'Left at ' + first_time
-                            print('Package ID:', get_hash_map().get(str(count))[0], '   Street address:',
-                                  get_hash_map().get(str(count))[2], get_hash_map().get(str(count))[3],
-                                  get_hash_map().get(str(count))[4], get_hash_map().get(str(count))[5],
-                                  '  Required delivery time:', get_hash_map().get(str(count))[6],
-                                  ' Package weight:', get_hash_map().get(str(count))[7], '  Truck status:',
-                                  get_hash_map().get(str(count))[9], '  Delivery status:',
-                                  get_hash_map().get(str(count))[10])
+                            get_hash_map().get(str(packages_id))[10] = 'Delivered at ' + delivered_time
+                            get_hash_map().get(str(packages_id))[9] = 'Left at ' + departure_time
+                    print('Package ID:', get_hash_map().get(str(packages_id))[0], ", ", get_hash_map().get(str(packages_id))[9], ", ", get_hash_map().get(str(packages_id))[10])
             except IndexError:
                 print(IndexError)
                 exit()
@@ -105,7 +76,6 @@ if __name__ == '__main__':
                 exit()
         elif command == 'insert':
             #Create a new package
-            #r_value = [r_package_ID, "", r_address, r_city, r_state, r_zip, r_delivery, r_size, r_note, "", "At hub"]
             _package_id = input('package ID number:')
             _address = input('address:')
             _city = input('city:')

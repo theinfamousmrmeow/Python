@@ -1,25 +1,9 @@
 
-
-
-
-
 from alg2.IngestData import check_first_truck_first_trip
 from alg2.IngestData import check_first_truck_second_trip
 from alg2.IngestData import check_second_truck_first_trip
 
-
-from alg2.Distances import check_distance
-from alg2.Distances import check_time_first_truck
-from alg2.Distances import check_time_second_truck
-from alg2.Distances import check_time_third_truck
-from alg2.Distances import check_current_distance
-from alg2.Distances import calculate_shortest_distance
-from alg2.Distances import first_optimized_truck_index
-from alg2.Distances import first_optimized_truck_list
-from alg2.Distances import second_optimized_truck_index
-from alg2.Distances import second_optimized_truck_list
-from alg2.Distances import third_optimized_truck_index
-from alg2.Distances import third_optimized_truck_list
+from alg2.Distances import *
 
 from alg2.IngestData import get_hash_map
 
@@ -37,15 +21,6 @@ leave_times = ['8:00:00', '9:15:00', '11:00:00']
 first_time = '8:00:00'
 second_time = '9:15:00'
 third_time = '11:00:00'
-get_hash_map().print()
-# the operations below convert the string time into a datetime.timedelta
-(h, m, s) = first_time.split(':')
-convert_first_time = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
-(h, m, s) = second_time.split(':')
-convert_second_time = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
-(h, m, s) = third_time.split(':')
-convert_third_time = datetime.timedelta(hours=int(h), minutes=int(m), seconds=int(s))
-
 # for loop updates the delivery status of all packages in truck 1 to when the truck leaves the station
 i = 0  # counter to iterate through for loop
 # Space-time complexity is O(N)
@@ -66,11 +41,7 @@ try:
 except IndexError:
     pass
 # calls to the greedy algorithm that sorts the packages in a more efficient order
-
-
 calculate_shortest_distance(first_delivery, 1, 0)
-
-
 first_truck_total_distance = 0
 
 # this for loop takes the values in the first truck and runs them through the distance functions in the Distances.py file
@@ -79,7 +50,7 @@ first_truck_package_id = 0
 for index in range(len(first_optimized_truck_index())):
     try:
         # calculate the total distance of the truck
-        first_truck_total_distance = check_distance(int(first_optimized_truck_index()[index]), int(first_optimized_truck_index()[index + 1]), first_truck_total_distance)
+        first_truck_total_distance += point_distance(int(first_optimized_truck_index()[index]),int(first_optimized_truck_index()[index + 1]))
         # calculate the distance of each package along the route
         deliver_package = check_time_first_truck(check_current_distance(int(first_optimized_truck_index()[index]), int(first_optimized_truck_index()[index + 1])))
         first_optimized_truck_list()[first_truck_package_id][10] = (str(deliver_package))
